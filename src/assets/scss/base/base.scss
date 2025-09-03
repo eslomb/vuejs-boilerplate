@@ -1,0 +1,17 @@
+@use '../vars/text';
+
+body{
+	font-family: text.$font;
+}
+a{
+	&:hover{
+		text-decoration: none;			
+	}
+}
+[v-cloak]>* {
+	display: none
+}
+
+@view-transition{
+	navigation: auto;
+}
