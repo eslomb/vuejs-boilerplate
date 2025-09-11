@@ -3,13 +3,14 @@ import { useStepsStore } from "../../stores/steps";
 import { computed } from "vue";
 
 import ComponentA from '@/components/demos/ComponentA.vue';
+import Products from "./Products.vue";
 import Counter from '@/components/demos/Counter.vue';
 import UsersList from '@/components/demos/UsersList.vue';
 import PostsList from '@/components/demos/PostsList.vue';
 import UsersTable from '@/components/demos/UsersTable.vue';
 import PostsTable from '@/components/demos/PostsTable.vue';
 
-const stepsArr = [ UsersTable, UsersList, PostsTable,PostsList, ComponentA, Counter ];
+const stepsArr = [Products, UsersTable, UsersList, PostsTable,PostsList, ComponentA, Counter ];
 
 const steps = useStepsStore();
 steps.load(stepsArr);

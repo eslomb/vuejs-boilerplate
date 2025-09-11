@@ -39,3 +39,8 @@ npm install --save \
 
 * Plugins
     npm i datatables.net-plugins
+
+
+### VUE3 CAROUSEL
+https://vue3-carousel.ismail9k.com
+npm install vue3-carousel
