@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Steps  from '@/components/demos/Steps.vue';
 import ComponentA  from '@/components/demos/ComponentA.vue';
 import Counter  from '@/components/demos/Counter.vue';
-import ContactForm from '@/components/demos/ContactForm.vue';
+import ContactForm from '@/components/demos/forms/ContactForm.vue';
 
 const routes = [
     { path: '/', name: 'Home', component: Steps },
