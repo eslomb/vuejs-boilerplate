@@ -1,12 +1,10 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
 
 defineProps({
     properties: { type: Object, required: true },
     component: { type: Object, required: true },
 });
 
-onMounted(() => {});
 </script>
 
 <template>
@@ -19,6 +17,7 @@ onMounted(() => {});
             v-bind="component.attributes"
             v-on="component.events"      
             />
+            
         <div v-if="properties.errorMessage" class="errorMessage">
         {{ properties.errorMessage }}
         </div>

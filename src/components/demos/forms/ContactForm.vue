@@ -16,13 +16,13 @@ const fields = ref([
         },
         component:{
             type: 'input',
-            value: 'Esteban',
+            value: '',
             attributes: {
                 type: 'text',
                 placeholder: 'Nombre y Apellido',
             },
             events: {
-                input: 'eventField1'
+                input: (e) => {getField('name').component.value = e.target.value;}
             }
         }
     },
@@ -34,13 +34,13 @@ const fields = ref([
         },
         component:{
             type: 'input',
-            value: 'esteban@lombardi.com',
+            value: '',
             attributes: {
                 type: 'email',
                 placeholder: 'Dirección de correo electrónico',
             },
             events: {
-                input: 'eventField2'
+                input: (e) => getField('email').component.value = e.target.value
             }
         }
     },
@@ -52,13 +52,30 @@ const fields = ref([
         },
         component:{
             type: 'textarea',
-            value: 'mensaje de prueba',
+            value: '',
             attributes: {
-                // type: 'email',
                 placeholder: 'Ingresa tu mensaje',
             },
             events: {
-                input: 'eventField3'
+                input: (e) => getField('message').component.value = e.target.value
+            }
+        }
+    },
+    {
+        properties: {
+            id: "newsletter",
+            label: "Suscribirme al newsletter",
+            errorMessage: null,
+        },
+        component:{
+            type: 'input',
+            value: true,
+            attributes: {
+                checked: true,
+                type: 'checkbox',
+            },
+            events: {
+                input: (e) => getField('newsletter').component.value = e.target.checked
             }
         }
     },
@@ -70,24 +87,15 @@ const schema = z.object({
   message: z.string().min(5, 'El mensaje debe tener al menos 5 caracteres')
 })
 
-const eventHandlers = {
-  eventField1: (e) => {fields.value[0].component.value = e.target.value;},
-  eventField2: (e) => {fields.value[1].component.value = e.target.value;},
-  eventField3: (e) => {fields.value[2].component.value = e.target.value;},
-}
-
 async function handleSubmit() {
     if (!validateForm()) return
         
-    const toSend = fields.value.reduce((acc, field) => {
-        acc[field.properties.id] = field.component.value;
-        return acc;
-    }, {});
+    const toSend = formValues();
 
     sending.value = true;
 
     // fetch a una API o un servidor    
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 500));
 
     sendResult.value = `Gracias, el formulario ha sido enviado. <pre> ${JSON.stringify(toSend, null, 2)} </pre>`;
 
@@ -96,22 +104,19 @@ async function handleSubmit() {
     resetForm();
 }
 
-function attachEvents() {    
-    fields.value.forEach(field => {
-        if (field.component.events) {
-            Object.keys(field.component.events).forEach(eventName => {
-            const handlerName = field.component.events[eventName];
-            field.component.events[eventName] = eventHandlers[handlerName];
-            });
-        }
-    });
+function getField(id){
+    return fields.value.find(f => f.properties.id === id);
 }
 
-function validateForm() {
-    const form = fields.value.reduce((acc, field) => {
+function formValues(){
+    return fields.value.reduce((acc, field) => {
         acc[field.properties.id] = field.component.value;
         return acc;
     }, {});
+}
+
+function validateForm() {
+    const toValidate = formValues();
 
     // Limpiar mensajes de error previos
     
@@ -121,7 +126,7 @@ function validateForm() {
         field.properties.errorMessage = null;
     });
 
-    const validationResult = schema.safeParse(form)
+    const validationResult = schema.safeParse(toValidate);
     if (!validationResult.success) {
         for (const issue of validationResult.error.issues) {
             const field = fields.value.find(f => f.properties.id === issue.path[0]);
@@ -154,9 +159,12 @@ const errorsSummary = computed(() => {
 });
 
 onMounted(() => {
-    attachEvents();
+    if(import.meta.env.DEV){
+        getField('name').component.value = 'John Doe';
+        getField('email').component.value = 'BxKl0@example.com';
+        getField('message').component.value = 'Esto es un mensaje de prueba';
+    }
 });
-
 </script>
 
 <template>
@@ -178,7 +186,7 @@ onMounted(() => {
         
         <div v-if="sendResult" class="results" v-html="sendResult"></div>
     </form>
-
+    
 </template>
 
 
@@ -209,7 +217,8 @@ onMounted(() => {
             grid-template-columns: 1fr 1fr;
             grid-template-areas: 
             "name email" 
-            "message message";
+            "message message"
+            "newsletter newsletter";
             gap: 1em;
         }
 
@@ -219,7 +228,7 @@ onMounted(() => {
         color: #333;
         display: block;
       }
-      input, textarea {
+      input[type="text"], input[type="email"], input[type="password"], textarea {
         width: 100%;
         padding: 0.75em 1em;
         border: 1px solid #d1d5db;
