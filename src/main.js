@@ -18,4 +18,13 @@ app.use(createPinia());
 import {router} from './router';
 app.use(router);
 
+// PrimeVue
+import PrimeVue from 'primevue/config';
+import {appPreset} from './config/primevue.js';
+app.use(PrimeVue, {
+    theme: {
+        preset: appPreset
+    }
+});
+
 app.mount('#app');

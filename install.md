@@ -26,6 +26,10 @@ npm i @vueuse/core
 https://zod.dev
 npm i zod 
 
+### PRIMEVUE
+https://primevue.org
+npm install primevue @primeuix/themes
+
 ### DATATABLES
 https://datatables.net/manual/vue
 npm install --save datatables.net-vue3 datatables.net-dt

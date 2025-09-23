@@ -1,8 +1,12 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, shallowRef, computed, onMounted, markRaw } from "vue";
 import { z } from 'zod';
 import Field from "./Field.vue";
 import Loader from "@/components/shared/Loader.vue";
+import InputText from 'primevue/inputtext';
+import Textarea from 'primevue/textarea';
+import Checkbox from "primevue/checkbox";
+import { Select } from "primevue";
 
 const sending = ref(false);
 const sendResult = ref('');
@@ -15,15 +19,12 @@ const fields = ref([
             errorMessage: null,
         },
         component:{
-            type: 'input',
+            type: markRaw(InputText),
             value: '',
             attributes: {
                 type: 'text',
                 placeholder: 'Nombre y Apellido',
             },
-            events: {
-                input: (e) => {getField('name').component.value = e.target.value;}
-            }
         }
     },
     {
@@ -33,15 +34,12 @@ const fields = ref([
             errorMessage: null,
         },
         component:{
-            type: 'input',
+            type: markRaw(InputText),
             value: '',
             attributes: {
                 type: 'email',
                 placeholder: 'Dirección de correo electrónico',
             },
-            events: {
-                input: (e) => getField('email').component.value = e.target.value
-            }
         }
     },
     {
@@ -51,14 +49,11 @@ const fields = ref([
             errorMessage: null,
         },
         component:{
-            type: 'textarea',
+            type: markRaw(Textarea),
             value: '',
             attributes: {
                 placeholder: 'Ingresa tu mensaje',
             },
-            events: {
-                input: (e) => getField('message').component.value = e.target.value
-            }
         }
     },
     {
@@ -68,15 +63,33 @@ const fields = ref([
             errorMessage: null,
         },
         component:{
-            type: 'input',
+            type: markRaw(Checkbox),
             value: true,
             attributes: {
-                checked: true,
-                type: 'checkbox',
+                binary: true
             },
-            events: {
-                input: (e) => getField('newsletter').component.value = e.target.checked
-            }
+        }
+    },
+    {
+        properties: {
+            id: "conocido",
+            label: "¿Cómo nos conociste?",
+            errorMessage: null,
+        },
+        component:{
+            type: markRaw(Select),
+            value: null,
+            attributes: {
+                placeholder: 'Seleccionar...',
+                options: [
+                    {label: 'Facebook', value: 'facebook'},
+                    {label: 'Instagram', value: 'instagram'},
+                    {label: 'Google', value: 'google'},
+                    {label: 'Otro', value: 'otro'},
+                ],
+                optionLabel: 'label',
+                optionValue: 'value',
+            },
         }
     },
 ]);
@@ -84,12 +97,15 @@ const fields = ref([
 const schema = z.object({
   name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
   email: z.email('Email debe ser una dirección válida'),
-  message: z.string().min(5, 'El mensaje debe tener al menos 5 caracteres')
+  message: z.string().min(5, 'El mensaje debe tener al menos 5 caracteres'),
+  conocido: z.string('Debes seleccionar una opción'),
 })
 
 async function handleSubmit() {
     if (!validateForm()) return
-        
+            
+    sendResult.value = ''; // Limpiar mensajes de error previos
+    
     const toSend = formValues();
 
     sending.value = true;
@@ -117,10 +133,6 @@ function formValues(){
 
 function validateForm() {
     const toValidate = formValues();
-
-    // Limpiar mensajes de error previos
-    
-    sendResult.value = '';
     
     fields.value.forEach(field => {
         field.properties.errorMessage = null;
@@ -163,15 +175,22 @@ onMounted(() => {
         getField('name').component.value = 'John Doe';
         getField('email').component.value = 'BxKl0@example.com';
         getField('message').component.value = 'Esto es un mensaje de prueba';
+        getField('conocido').component.value = 'otro';
     }
 });
 </script>
 
 <template>
-    <form class="custom-form" @submit.prevent="handleSubmit">
+    <form class="contact-form" @submit.prevent="handleSubmit">
         <fieldset class="grid">
-            <Field v-for="field in fields" :key="field.id" 
-            :properties="field.properties" :component="field.component"></Field>
+            <Field v-for="field in fields" :key="field.id" :properties="field.properties" >
+                <component v-if="field.component"
+                    :is="field.component.type"
+                    v-model="field.component.value"
+                    v-bind="field.component.attributes"
+                    v-on="field.component.events??{}"
+                    />
+            </Field>
         </fieldset>
 
         <div class="buttons">
@@ -185,80 +204,86 @@ onMounted(() => {
         <div v-if="errorsSummary" class="errors" v-html="errorsSummary"></div>
         
         <div v-if="sendResult" class="results" v-html="sendResult"></div>
+        <pre>{{ formValues() }}</pre>
     </form>
-    
 </template>
 
 
 <style lang="scss">
-.custom-form {
+.contact-form {
   max-width: 600px;
   margin: auto;
-  padding: 2rem;
+  padding:1.5rem 1rem;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.08);
   
   fieldset{
-      width: 100%;
-      border: none;
-      padding: 0;
-      margin: 0 0 1em 0;
-      
-      
-      &.flex{
-          display: flex;
-          flex-direction: column;
-          gap: 1.2em;
-      }
-      
-        &.grid{
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-areas: 
-            "name email" 
-            "message message"
-            "newsletter newsletter";
-            gap: 1em;
-        }
+    width: 100%;
+    border: none;
+    padding: 0;
+    margin: 0 0 1em 0;
 
-      label {
-        font-weight: 600;
-        margin-bottom: 0.5em;
-        color: #333;
-        display: block;
-      }
-      input[type="text"], input[type="email"], input[type="password"], textarea {
+
+    &.flex{
+        display: flex;
+        flex-direction: column;
+        gap: 1.2em;
+    }
+      
+    &.grid{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas: 
+        "name email" 
+        "message message"
+        "conocido newsletter";
+        gap: 1em;
+    }
+
+    label {
+    font-weight: 600;
+    margin-bottom: 0.5em;
+    color: #333;
+    display: block;
+    }
+    .field-group > input:not([type="checkbox"]), .field-group > textarea  {
+             
         width: 100%;
-        padding: 0.75em 1em;
-        border: 1px solid #d1d5db;
-        font-size: 1rem;
-        font-family: inherit;
-        background: #f9fafb;
-        transition: border-color 0.2s, box-shadow 0.2s;
-        resize: none;
-        outline: none;
-        margin-bottom: 0.25em;
-        box-sizing: border-box;
-      }
-      textarea{
-          max-height: 300px;
-          overflow: auto;
-          field-sizing: content;
-      }
-      input:focus, textarea:focus {
-        border-color: #6366f1;
-        box-shadow: 0 0 0 2px #6366f133;
-        background: #fff;
-      }
+        // padding: 0.75em 1em;
+        // border: 1px solid #d1d5db;
+        // font-size: .9rem;
+        // font-family: inherit;
+        // background: #f9fafb;
+        // transition: border-color 0.2s, box-shadow 0.2s;
+        // resize: none;
+        // outline: none;
+        // margin-bottom: 0.25em;
+        // box-sizing: border-box;
+    }
+    textarea{
+        max-height: 300px;
+        overflow: auto;
+        field-sizing: content;
+    }
+    // input:focus, textarea:focus {
+    //     border-color: #6366f1;
+    //     box-shadow: 0 0 0 2px #6366f133;
+    //     background: #fff;
+    // }
       
-      .errorMessage {
-          color: #dc2626;
-          font-size: 0.8em;
-          margin-top: 0.2em;
-      }
+    .errorMessage {
+        color: #dc2626;
+        font-size: 0.8em;
+        margin-top: 0.2em;
+    }
 
+    .w-full{
+        width: 100%;
+    }
   }
+
+
   .buttons {
       display: flex;
       flex-wrap: wrap;
@@ -303,8 +328,6 @@ onMounted(() => {
         padding: 5px;
     
       margin-block: 1em;
-  }
-
-  
+  }  
 }
 </style>

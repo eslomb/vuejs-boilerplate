@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@primeuix/themes": "^1.2.3",
     "datatables.net-buttons": "^3.2.4",
     "datatables.net-dt": "^2.3.3",
     "datatables.net-plugins": "^2.3.2",
@@ -17,6 +18,7 @@
     "jszip": "^3.10.1",
     "pdfmake": "^0.2.20",
     "pinia": "^3.0.3",
+    "primevue": "^4.3.9",
     "vue": "^3.5.18",
     "vue-router": "^4.5.1",
     "vue-spinner": "^1.0.4",
