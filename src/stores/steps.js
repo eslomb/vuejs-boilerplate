@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { ref, computed, markRaw } from "vue";
 
 
 export const useStepsStore = defineStore('stepsStore', () => {
@@ -10,31 +10,35 @@ export const useStepsStore = defineStore('stepsStore', () => {
     const isFirstStep = computed(() => steps.value && steps.value[0] === currentStep.value);
     const isLastStep = computed(() => steps.value && steps.value[steps.value.length - 1] === currentStep.value);
 
+    function updateCurrentStep(step) {
+        currentStep.value = markRaw(step);
+    }
+
     function load(stepsArr) {
         steps.value = stepsArr;
-        currentStep.value = steps.value[0];
+        goToFirstStep();
     }
 
     function next() {
         const idx = steps.value.findIndex(r => r === currentStep.value);
         if (idx < steps.value.length - 1) {
-            currentStep.value = steps.value[idx + 1];
+            updateCurrentStep(steps.value[idx + 1]);
         }
     }
 
     function previous() {
         const idx = steps.value.findIndex(r => r === currentStep.value);
         if (idx > 0) {
-            currentStep.value = steps.value[idx - 1];
+            updateCurrentStep(steps.value[idx - 1]);
         }
     }
 
     function goToFirstStep() {
-        currentStep.value = steps.value[0];
+        updateCurrentStep(steps.value[0]);
     }
 
     function goToLastStep() {
-        currentStep.value = steps.value[steps.value.length - 1];
+        updateCurrentStep(steps.value[steps.value.length - 1]);
     }
 
     function goToStep(componentName) {
@@ -47,7 +51,7 @@ export const useStepsStore = defineStore('stepsStore', () => {
             console.log(steps.value, `Step "${componentName}" not found. Available: ${available}`);
             // throw new Error('Step not found');
         }
-        currentStep.value = step;
+        updateCurrentStep(step);
     }
 
     return {

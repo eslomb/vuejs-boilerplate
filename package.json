@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@primeuix/themes": "^1.2.3",
+    "@vueuse/core": "^13.9.0",
     "datatables.net-buttons": "^3.2.4",
     "datatables.net-dt": "^2.3.3",
     "datatables.net-plugins": "^2.3.2",

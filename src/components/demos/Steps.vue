@@ -9,8 +9,9 @@ import UsersList from '@/components/demos/UsersList.vue';
 import PostsList from '@/components/demos/PostsList.vue';
 import UsersTable from '@/components/demos/UsersTable.vue';
 import PostsTable from '@/components/demos/PostsTable.vue';
+import InfiniteScroll from '@/components/demos/InfiniteScroll.vue';
 
-const stepsArr = [Products, UsersTable, UsersList, PostsTable,PostsList, ComponentA, Counter ];
+const stepsArr = [InfiniteScroll, Products, UsersTable, UsersList, PostsTable,PostsList, ComponentA, Counter ];
 
 const steps = useStepsStore();
 steps.load(stepsArr);
@@ -23,7 +24,7 @@ const currentComponent = computed(() => steps.currentStep);
 <template>
     <h2>Steps</h2>
     
-    <section class="steps-buttons">
+    <nav class="steps-buttons">
         <button :disabled="steps.isFirstStep" @click="steps.goToFirstStep()">First</button>
         <button :disabled="steps.isFirstStep" @click="steps.previous()">Previous</button>
         <button :disabled="steps.isLastStep" @click="steps.next()">Next</button>
@@ -34,7 +35,7 @@ const currentComponent = computed(() => steps.currentStep);
             @click="steps.goToStep(step.__name)">
             {{ step.__name }}
         </button>
-    </section>
+    </nav>
     
     <component :is="currentComponent"></component>
 
