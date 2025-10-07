@@ -18,6 +18,7 @@
   nav{
     border-bottom: 1px solid black;
     display: flex;
+    justify-content: center;
     flex-wrap: wrap;
     gap: 1em;
     padding-bottom: 1em; 

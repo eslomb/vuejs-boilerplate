@@ -1,7 +1,6 @@
-import {appConfig} from '../config/app.js';
 
 function endpointUrl(endpoint) {
-    return `${appConfig.apiURL}${endpoint}`;
+    return `${import.meta.env.VITE_API_BASE_URL}${endpoint}`;
 }
 
 export {

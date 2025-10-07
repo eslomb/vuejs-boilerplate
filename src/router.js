@@ -12,6 +12,6 @@ const routes = [
 ]
 
 export const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHistory(window.location.pathname),
     routes
 })

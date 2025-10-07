@@ -8,6 +8,6 @@ const counter = useCounterStore();
 
     <h3>Counter</h3>
     <div>Count: {{ counter.count }}</div>
-    <SharedLinkButton @click="() => counter.increment()">Incrementar</SharedLinkButton>
+    <SharedLinkButton @click.prevent="() => counter.increment()">Incrementar</SharedLinkButton>
 
 </template>

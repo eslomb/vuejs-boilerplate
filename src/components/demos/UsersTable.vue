@@ -2,8 +2,8 @@
 import { defineAsyncComponent, ref } from "vue";
 import { useUsersStore } from '@/stores/demos/demo-users';
 import datatableDefaultOptions from '@/config/datatable';
-// import BaseTable from './BaseTable.vue';
-const BaseTable = defineAsyncComponent(() => import('./BaseTable.vue', {eager: true, delay: 2000}));
+import BaseTable from './BaseTable.vue';
+// const BaseTable = defineAsyncComponent(() => import('./BaseTable.vue', {eager: true, delay: 2000}));
 
 const usersStore = useUsersStore();
 

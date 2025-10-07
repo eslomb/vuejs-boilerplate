@@ -9,10 +9,11 @@ export function useFetch(defaultOptions = {}) {
     let currentController = null; // store the current AbortController
 
     const call = async (url, payload = null, options = {}) => {
-        // Cancel previous request if still running
-        if (currentController) {
+        // // Cancel previous request if still running
+        if (options.cancelPreviousRequest && currentController) {
             currentController.abort();
         }
+        
 
         loading.value = true;        
         errorMessage.value = null;
@@ -58,11 +59,20 @@ export function useFetch(defaultOptions = {}) {
         }
     };
 
+    const cancel = () => {
+        if (currentController) {
+            currentController.abort()
+            currentController = null
+            console.warn('Request canceled')
+        }
+    }
+
     return {
         data,
         errorMessage,
         errorCode,
         loading,
         call,
+        cancel
     };
 }
