@@ -15,7 +15,7 @@ import { createPinia } from 'pinia';
 app.use(createPinia());
 
 // VueRouter
-import {router} from './router';
+import {router} from './routes/router.js';
 app.use(router);
 
 // PrimeVue

@@ -1,6 +1,6 @@
 <script setup>
 import { useUsersStore } from '@/stores/demos/demo-users';
-import BaseList from '@/components/demos/BaseList.vue';
+import BaseList from '@/modules/demos/BaseList.vue';
 
 const usersStore = useUsersStore();
 

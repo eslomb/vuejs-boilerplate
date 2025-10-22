@@ -1,15 +1,15 @@
 <script setup>
-import { useStepsStore } from "../../stores/steps";
+import { useStepsStore } from "@/stores/steps";
 import { computed } from "vue";
 
-import ComponentA from '@/components/demos/ComponentA.vue';
-import Products from "@/components/demos/Products.vue";
-import Counter from '@/components/demos/Counter.vue';
-import UsersList from '@/components/demos/UsersList.vue';
-import PostsList from '@/components/demos/PostsList.vue';
-import UsersTable from '@/components/demos/UsersTable.vue';
-import PostsTable from '@/components/demos/PostsTable.vue';
-import InfiniteScroll from '@/components/demos/InfiniteScroll.vue';
+import ComponentA from '@/modules/demos/ComponentA.vue';
+import Products from "@/modules/demos/Products.vue";
+import Counter from '@/modules/demos/Counter.vue';
+import UsersList from '@/modules/demos/UsersList.vue';
+import PostsList from '@/modules/demos/PostsList.vue';
+import UsersTable from '@/modules/demos/UsersTable.vue';
+import PostsTable from '@/modules/demos/PostsTable.vue';
+import InfiniteScroll from '@/modules/demos/InfiniteScroll.vue';
 
 const stepsArr = [InfiniteScroll, Products, UsersTable, UsersList, PostsTable, PostsList, ComponentA, Counter ];
 
@@ -22,7 +22,7 @@ const currentComponent = computed(() => steps.currentStep);
 </script>
 
 <template>
-    <h2>Steps</h2>
+    <h2>Steps View Demo</h2>
     
     <nav class="steps-buttons">
         <button :disabled="steps.isFirstStep" @click="steps.goToFirstStep()">First</button>
@@ -52,7 +52,7 @@ const currentComponent = computed(() => steps.currentStep);
 
 </template>
 
-<style>
+<style scoped>
     /* .fade-enter-active,
     .fade-leave-active {
         transition: opacity 0.3s ease;
@@ -62,21 +62,48 @@ const currentComponent = computed(() => steps.currentStep);
     .fade-leave-to {
         opacity: 0;
     } */
-
+    @property --luminosity {
+        syntax: '<percentage>';
+        initial-value: 80%;
+        inherits: false;
+    }
+    @property --hue{
+        syntax: '<angle>';
+        initial-value: 0deg;
+        inherits: true;
+    }
+    @property --chroma{
+        syntax: '<integer>';
+        initial-value: 0;
+        inherits: true;
+    }
 
     .steps-buttons{
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
+        margin-bottom: 2em;
         button{
+            background-color: lch(var(--luminosity) var(--chroma) var(--hue));
             padding: 8px 10px;
             border-radius: 6px;
             border: 0;
+            cursor: pointer;
+            transition: all 0.2s;
+            &:hover{
+                --luminosity: 90%;
+                --hue: 60deg;
+                --chroma: 60;
+            }
+            &[disabled]{
+                --luminosity: 95%; 
+                cursor: not-allowed;
+            }   
         }
     }   
     
     
-    .fetch-buttons{
+    /* .fetch-buttons{
         display: flex;
         flex-wrap: wrap;
         gap: 1em;
@@ -91,5 +118,5 @@ const currentComponent = computed(() => steps.currentStep);
             cursor: pointer;
             background-color: aliceblue;
         }
-    }
+    } */
 </style>

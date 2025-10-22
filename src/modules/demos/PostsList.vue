@@ -1,6 +1,6 @@
 <script setup>
 import { usePostsStore } from '@/stores/demos/demo-posts';
-import BaseList from '@/components/demos/BaseList.vue';
+import BaseList from '@/modules/demos/BaseList.vue';
 
 const postsStore = usePostsStore();
 
